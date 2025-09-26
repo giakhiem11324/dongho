@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đồng hồ báo thức Anime</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      text-align: center;
+      background: url("genshin.png") no-repeat center center fixed;
+       background-size: contain; /* Giữ đúng tỉ lệ gốc ảnh */
+    }
+
+    .clock {
+        font-size: 1.2em;   /* chữ nhỏ vừa đủ */
+        margin-bottom: 15px;
+        text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+        animation: fadeIn 2s ease-in-out;
+    }
+
+    .alarm-container {
+      background: rgba(0, 0, 0, 0.5);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.6);
+  max-width: 250px;   /* nhỏ gọn hơn */
+  width: 85%;
+  font-size: 0.9em;   /* chữ nhỏ */
+  animation: fadeIn 2s ease-in-out, pulse 3s infinite;
+    }
+
+    .alarm-container h2 {
+      margin-bottom: 10px;
+    }
+
+    .alarm-container input {
+      padding: 5px;
+      font-size: 1em;
+      border-radius: 6px;
+      border: none;
+      margin: 5px 0;
+      text-align: center;
+    }
+
+    .alarm-container button {
+      margin-top: 10px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+
+    .alarm-container button:hover {
+      transform: scale(1.05);
+    }
+
+    .set-btn {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .clear-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    /* Hiệu ứng báo thức */
+    .ringing {
+      animation: flash 1s infinite, shake 0.5s infinite;
+    }
+
+    @keyframes flash {
+      0%, 100% { background-color: rgba(255, 0, 0, 0.8); }
+      50% { background-color: rgba(0, 0, 0, 0.4); }
+    }
+
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      20% { transform: translate(-1px, -2px) rotate(-1deg); }
+      40% { transform: translate(-3px, 0px) rotate(1deg); }
+      60% { transform: translate(3px, 2px) rotate(0deg); }
+      80% { transform: translate(1px, -1px) rotate(1deg); }
+      100% { transform: translate(-1px, 2px) rotate(-1deg); }
+    }
+
+    /* Hiệu ứng mờ mờ khi xuất hiện */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hiệu ứng nhịp tim */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+  </style>
+</head>
+<body>
+  <div class="clock" id="clock"></div>
+
+  <div class="alarm-container" id="alarmBox">
+    <h2>Đặt báo thức</h2>
+    <label for="hour">Giờ (0-23): </label>
+    <input type="number" id="hour" min="0" max="23" placeholder="0-23"><br>
+    <label for="minute">Phút (0-59): </label>
+    <input type="number" id="minute" min="0" max="59" placeholder="0-59"><br>
+    <label for="second">Giây (0-59): </label>
+    <input type="number" id="second" min="0" max="59" placeholder="0-59"><br>
+    <button class="set-btn" onclick="setAlarm()">Đặt</button>
+    <button class="clear-btn" onclick="clearAlarm()">Tắt</button>
+    <p id="status"></p>
+  </div>
+
+  <audio id="alarmSound" src="onichan.mp3"></audio>
+
+  <script>
+    const clock = document.getElementById("clock");
+    const alarmSound = document.getElementById("alarmSound");
+    const alarmBox = document.getElementById("alarmBox");
+    let alarmTime = null;
+
+    function updateClock() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      const dateString = now.toLocaleDateString("vi-VN", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+      clock.textContent = `${dateString} - ${timeString}`;
+
+      if (alarmTime && now.getHours() === alarmTime.hour && now.getMinutes() === alarmTime.minute && now.getSeconds() === alarmTime.second) {
+        triggerAlarm();
+      }
+    }
+
+    function setAlarm() {
+      const hour = parseInt(document.getElementById("hour").value);
+      const minute = parseInt(document.getElementById("minute").value);
+      const second = parseInt(document.getElementById("second").value);
+
+      if (
+        isNaN(hour) || isNaN(minute) || isNaN(second) ||
+        hour < 0 || hour > 23 ||
+        minute < 0 || minute > 59 ||
+        second < 0 || second > 59
+      ) {
+        alert("Vui lòng nhập giờ 0-23, phút 0-59 và giây 0-59!");
+        return;
+      }
+
+      alarmTime = { hour, minute, second };
+      document.getElementById("status").textContent = 
+        `Báo thức đặt lúc ${hour.toString().padStart(2,"0")}:${minute.toString().padStart(2,"0")}:${second.toString().padStart(2,"0")}`;
+    }
+
+    function clearAlarm() {
+      alarmTime = null;
+      alarmSound.pause();
+      alarmSound.currentTime = 0;
+      alarmBox.classList.remove("ringing");
+      document.getElementById("status").textContent = "Báo thức đã tắt";
+    }
+
+    function triggerAlarm() {
+      alarmSound.play();
+      alarmBox.classList.add("ringing");
+    }
+
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>

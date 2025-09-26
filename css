@@ -1,0 +1,104 @@
+/* Reset cơ bản */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: url("genshin.png") no-repeat center center fixed;
+  background-size: cover;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Lớp phủ mờ để chữ nhìn rõ */
+.overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 0;
+}
+
+/* Đồng hồ */
+#clock {
+  font-size: 64px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-shadow: 0 0 15px #fff,
+               0 0 25px #ff6ec4,
+               0 0 35px #7873f5;
+  z-index: 1;
+}
+
+/* Input và nút */
+#alarmTime {
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #fff;
+  font-size: 18px;
+  margin-right: 10px;
+  outline: none;
+}
+
+#setAlarm {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  color: #fff;
+  background: linear-gradient(135deg, #ff6ec4, #7873f5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(255,255,255,0.3);
+}
+
+#setAlarm:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(255,255,255,0.7);
+}
+
+/* Popup nhân vật */
+#popup {
+  display: none;
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 182, 193, 0.9);
+  border: 2px solid #fff;
+  border-radius: 20px;
+  padding: 20px 30px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(255,255,255,0.9),
+              0 0 50px #ff6ec4;
+  z-index: 10;
+  animation: popupFade 0.8s ease forwards;
+}
+
+#popup img {
+  max-width: 220px;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 15px rgba(255,255,255,0.8));
+}
+
+#popup h2 {
+  font-size: 24px;
+  color: #fff;
+  text-shadow: 0 0 10px #ff6ec4, 0 0 20px #7873f5;
+}
+
+/* Hiệu ứng popup */
+@keyframes popupFade {
+  from { opacity: 0; transform: translate(-50%, -60%) scale(0.8); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
